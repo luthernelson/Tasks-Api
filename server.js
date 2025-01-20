@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './secret.env' });
 
 const express = require('express');
+const cors = require('cors');
 const User = require('./models/User');
 const Todo = require('./models/Todo');
 const Task = require('./models/Task');
@@ -22,6 +23,7 @@ const getTask = require ( './router/Task/getTaskRoutes');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 
 app.use('/api', authRoutes);

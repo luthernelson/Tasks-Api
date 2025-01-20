@@ -3,18 +3,18 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const loginUser = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
     try{
-      if(!username || !password){
-         return res.status(400).json({ message: " les champs username et password sont requis",
+      if(!email || !password){
+         return res.status(400).json({ message: " les champs email et password sont requis",
              code: "AUTH-01",
              isError: true
          });
      }
 
          //verifie si l'utilisateur existe 
-         const user = await User.findOne ({ where: { username}});
+         const user = await User.findOne ({ where: { email}});
          if (!user) {
             return res.status(404).json({ message: 'utilisateur non trouvé',
                code: " AUTH-02",
@@ -31,7 +31,7 @@ const loginUser = async (req, res) => {
          }
 
          // créer un token Jwt
-         const token =  jwt.sign({ id: user.idUser, username: user.username},process.env.JWT_SECRET, {
+         const token =  jwt.sign({ id: user.idUser, email: user.email},process.env.JWT_SECRET, {
             expiresIn: '3h',
          });
 
