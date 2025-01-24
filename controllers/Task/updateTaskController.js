@@ -28,7 +28,7 @@ const updateTask = async (req, res) => {
     }
 
     // Mettre à jour le Todo avec les nouvelles données fournies
-    const { title, description, isCompled, todos } = req.body;
+    const { title, description, isCompled,isShared, todos } = req.body;
     // Mettez à jour uniquement les champs fournis
     if (title !== undefined) {
       tasks.title = title;
@@ -38,6 +38,9 @@ const updateTask = async (req, res) => {
     }
     if (description !== undefined) {
       tasks.description = description;
+    }
+    if (isShared !== undefined) {
+      tasks.isCompled = isCompled;
     }
 
     await tasks.save(); // Enregistrez les modifications

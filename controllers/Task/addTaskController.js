@@ -4,7 +4,7 @@ const Todo = require('../../models/Todo'); // Assurez-vous d'importer le modèle
 const createTask = async (req, res) => {
     try {
         const idUser = req.user.id;
-        const { title, description, isCompled, todos } = req.body;
+        const { title, description, isCompled,isShared, todos } = req.body;
 
 
         // Vérifiez si une tâche avec le même titre et l'utilisateur existe déjà
@@ -51,6 +51,7 @@ const createTask = async (req, res) => {
             title:title,
             description:description,
             isCompled:isCompled,
+            isShared: isShared,
         });
         // Vérifiez si des todos sont fournis dans la requête
         if (req.body.todos && Array.isArray(req.body.todos)) {

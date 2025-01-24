@@ -18,6 +18,9 @@ const updateTodo = require ( './router/Todo/updateTodoRoutes');
 const removeTask = require ( './router/Task/removeTaskRoutes');
 const updateTask = require ( './router/Task/updateTaskRoutes');
 const getTask = require ( './router/Task/getTaskRoutes');
+const addComment= require ('./router/Comment/addCommentRoutes');
+const getUser = require ('./router/Auth/getUserRoutes');
+const  shareTasks = require('./router/Task/shareTaskRoute');
 
 
 
@@ -37,6 +40,9 @@ app.use('/api', updateTodo);
 app.use('/api', removeTask);
 app.use('/api', updateTask);
 app.use('/api', getTask);
+app.use('/api', addComment);
+app.use('/api', shareTasks);
+app.use('/api', getUser)
 
 
 
