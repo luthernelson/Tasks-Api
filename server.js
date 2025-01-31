@@ -21,7 +21,7 @@ const getTask = require ( './router/Task/getTaskRoutes');
 const addComment= require ('./router/Comment/addCommentRoutes');
 const getUser = require ('./router/Auth/getUserRoutes');
 const  shareTasks = require('./router/Task/shareTaskRoute');
-
+const  getsharedTasks = require('./router/Task/getSharedTaskRoutes');
 
 
 const app = express();
@@ -42,8 +42,8 @@ app.use('/api', updateTask);
 app.use('/api', getTask);
 app.use('/api', addComment);
 app.use('/api', shareTasks);
-app.use('/api', getUser)
-
+app.use('/api', getUser);
+app.use('/api', getsharedTasks);
 
 
 const port = 3001;

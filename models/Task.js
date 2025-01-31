@@ -33,10 +33,6 @@ const Task = sequelize.define('Task', {
         type: DataTypes.BOOLEAN,
         allowNull: true,
     },
-    sharedWith: {
-        type: DataTypes.JSON, // Tableau d'IDs d'utilisateurs
-        allowNull: true, // Peut être nul au départ
-    },
 }, {
     freezeTableName: true, // Empêche Sequelize d'ajouter un 's' au nom de la table
 });
