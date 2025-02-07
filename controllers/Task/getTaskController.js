@@ -1,4 +1,4 @@
-const Task = require('../../models/Task');
+const {Task, User} = require('../../models');
 const Todo = require('../../models/Todo');
 
 const getTaskByTaskId = async (req, res) => {
@@ -13,7 +13,13 @@ const getTaskByTaskId = async (req, res) => {
     try {
         // Récupérer la tâche
         const task = await Task.findOne({
-            where: { idTask: taskId },
+            where: { idTask: taskId },        
+            include: [
+                {
+                  model: User,
+                  as: 'user',
+                  attributes: ['username'], 
+                },],
         });
 
         if (!task) {

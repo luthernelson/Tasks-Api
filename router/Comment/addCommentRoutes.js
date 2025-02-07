@@ -4,6 +4,6 @@ const { createComment } = require( '../../controllers/Comment/addCommentControll
 const router = express.Router();
 
 // Route pour créer une nouvelle todo
-router.post('/tasks/addComment', createComment); // Appliquer le middleware d'authentification
+router.post('/tasks/addComment/', createComment); // Appliquer le middleware d'authentification
 
 module.exports = router;

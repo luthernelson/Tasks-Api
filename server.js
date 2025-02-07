@@ -1,34 +1,53 @@
 require('dotenv').config({ path: './secret.env' });
 
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const cors = require('cors');
-const User = require('./models/User');
-const Todo = require('./models/Todo');
-const Task = require('./models/Task');
 const bodyParser = require('body-parser');
 const sequelize = require('./config/db');
-const authRoutes = require ('./router/Auth/authRoutes');
-const addUserRoutes = require ('./router/Auth/addUserRoutes');
-const addTaskRoutes = require ('./router/Task/addTaskRoutes');
-const listTaskRoutes = require ( './router/Task/listTaskRoutes');
-const addTodo = require ( './router/Todo/addTodoRoutes');
-const listTodo = require ( './router/Todo/listTodoRoutes');
-const removeTodo = require ( './router/Todo/removeTodoRoutes');
-const updateTodo = require ( './router/Todo/updateTodoRoutes');
-const removeTask = require ( './router/Task/removeTaskRoutes');
-const updateTask = require ( './router/Task/updateTaskRoutes');
-const getTask = require ( './router/Task/getTaskRoutes');
-const addComment= require ('./router/Comment/addCommentRoutes');
-const getUser = require ('./router/Auth/getUserRoutes');
-const  shareTasks = require('./router/Task/shareTaskRoute');
-const  getsharedTasks = require('./router/Task/getSharedTaskRoutes');
 
+// Importer vos routes
+const authRoutes = require('./router/Auth/authRoutes');
+const addUserRoutes = require('./router/Auth/addUserRoutes');
+const addTaskRoutes = require('./router/Task/addTaskRoutes');
+const listTaskRoutes = require('./router/Task/listTaskRoutes');
+const addTodo = require('./router/Todo/addTodoRoutes');
+const listTodo = require('./router/Todo/listTodoRoutes');
+const removeTodo = require('./router/Todo/removeTodoRoutes');
+const updateTodo = require('./router/Todo/updateTodoRoutes');
+const removeTask = require('./router/Task/removeTaskRoutes');
+const updateTask = require('./router/Task/updateTaskRoutes');
+const getTask = require('./router/Task/getTaskRoutes');
+const addComment = require('./router/Comment/addCommentRoutes');
+const getUser = require('./router/Auth/getUserRoutes');
+const shareTasks = require('./router/Task/shareTaskRoute');
+const getSharedTasks = require('./router/Task/getSharedTaskRoutes');
+const getCommentByTask = require('./router/Comment/getCommentByIDTask');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: 'http://localhost:5173', // Remplacez par l'origine de votre application frontend
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true,
+  },
+});
+
+// Configuration de CORS pour les routes Express
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+
+app.use(cors(corsOptions)); // Appliquer CORS à toutes les routes
 app.use(bodyParser.json());
-app.use(cors());
 
-
+// Définir les routes
 app.use('/api', authRoutes);
 app.use('/api', addUserRoutes);
 app.use('/api', addTaskRoutes);
@@ -43,17 +62,29 @@ app.use('/api', getTask);
 app.use('/api', addComment);
 app.use('/api', shareTasks);
 app.use('/api', getUser);
-app.use('/api', getsharedTasks);
-
+app.use('/api', getSharedTasks);
+app.use('/api', getCommentByTask);
 
 const port = 3001;
 
+io.on('connection', (socket) => {
+  console.log('Nouvel utilisateur connecté');
+
+  socket.on('sendMessage', (message) => {
+    // Émettre le message à tous les utilisateurs connectés
+    io.emit('receiveMessage', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Utilisateur déconnecté');
+  });
+});
 
 // Synchronisation des modèles avec la base de données
-sequelize.sync({ force: false })  // `force: false` pour ne pas supprimer les données existantes
+sequelize.sync({ force: false })  
   .then(() => {
     console.log('Tables synchronisées avec succès');
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Serveur démarré sur http://localhost:${port}`);
     });
   })

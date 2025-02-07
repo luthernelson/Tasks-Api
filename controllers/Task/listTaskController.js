@@ -32,10 +32,11 @@ const getUserTasks = async (req, res) => {
             return {
                 task, // Convertir en objet simple
                 todos: taskTodos, // Ajouter les todos associés
+                isError: false
             };
         });
 
-        res.status(200).json({ tasksWithTodos, isError: false}); // Retourner les tâches avec leurs todos
+        res.status(200).json(tasksWithTodos); // Retourner les tâches avec leurs todos
     } catch (error) {
         console.error('Erreur lors de la récupération des tâches:', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
