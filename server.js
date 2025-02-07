@@ -68,17 +68,18 @@ app.use('/api', getCommentByTask);
 const port = 3001;
 
 io.on('connection', (socket) => {
-  console.log('Nouvel utilisateur connecté');
+  console.log('Un utilisateur est connecté');
 
-  socket.on('sendMessage', (message) => {
-    // Émettre le message à tous les utilisateurs connectés
-    io.emit('receiveMessage', message);
+  socket.on('newComment', (data) => {
+    // Émettre le message à tous les clients sauf l'expéditeur
+    socket.broadcast.emit('newComment', data);
   });
 
   socket.on('disconnect', () => {
-    console.log('Utilisateur déconnecté');
+    console.log('Un utilisateur est déconnecté');
   });
 });
+
 
 // Synchronisation des modèles avec la base de données
 sequelize.sync({ force: false })  
