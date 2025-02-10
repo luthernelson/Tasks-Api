@@ -16,7 +16,7 @@ const getUser = async (req, res) => {
         console.log('Liste des utilisateurs:', user);
 
         // Inclure l'utilisateur dans la réponse
-        res.status(200).json({ user, isError: false });
+        res.status(200).json( user);
     } catch (error) {
         console.error('Erreur lors de la récupération des utilisateurs:', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });

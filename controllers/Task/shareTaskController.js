@@ -1,14 +1,15 @@
-const Task = require('../../models/Task'); // Assure-toi de charger le modèle de tâche
+const Task = require('../../models/Task'); // Assurez-vous de charger le modèle de tâche
 const Todo = require('../../models/Todo');
+const User = require('../../models/User'); // Assurez-vous de charger le modèle d'utilisateur
 
 const shareTask = async (req, res) => {
-    const { idTask } = req.body; // On suppose que taskId et userIds sont envoyés dans le corps de la requête
+    const { idTask, idUser} = req.body; // On suppose que idTask et userIds sont envoyés dans le corps de la requête
 
     try {
-        // Vérifier que idTask est fourni
-        if (!idTask) {
+        // Vérifier que idTask et userIds sont fournis
+        if (!idTask || !Array.isArray(idUser) || idUser.length === 0) {
             return res.status(400).json({
-                message: 'idTask est requis',
+                message: 'idTask et userIds sont requis',
                 code: "TASK-06",
                 isError: true
             });
@@ -22,13 +23,27 @@ const shareTask = async (req, res) => {
                 code: "TASK-04",
                 isError: true
             });
-        }else{
+        }
+
         task.isShared = true; // Assurez-vous que la propriété isShared existe dans le modèle Task  
         await task.save();
+
         const todos = await Todo.findAll({ where: { idTask } });
 
-    
-        console.log('Tâche partagée avec tous les utilisateurs');
+        // Optionnel: ajouter une logique pour partager la tâche avec les utilisateurs
+        const users = await User.findAll({ where: { idUser: idUser } });
+        if (users.length === 0) {
+            return res.status(404).json({
+                message: 'Aucun utilisateur trouvé',
+                code: "USER-01",
+                isError: true
+            });
+        }
+
+        // Logique pour notifier les utilisateurs ou enregistrer le partage peut être ajoutée ici.
+
+        console.log('Tâche partagée avec les utilisateurs sélectionnés');
+
         // Répondre avec la tâche mise à jour
         res.status(200).json({ tasksWithTodos: [
             {
@@ -49,11 +64,11 @@ const shareTask = async (req, res) => {
             }
         ],
         isError: false});
-        }
-
+        
     } catch (error) {
         console.error('Erreur lors du partage de la tâche:', error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 };
+
 module.exports = { shareTask };
