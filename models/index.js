@@ -2,7 +2,8 @@ const sequelize = require('../config/db');
 const User = require('./User');
 const Task = require('./Task');
 const Todo = require('./Todo');
-const Comment= require('./Comment');
+const Comment = require('./Comment');
+const Conversation = require('./Conversation'); // Importer le modèle Conversation
 
 
 User.hasMany(Task, { foreignKey: 'idUser', as: 'tasks', onDelete: 'CASCADE' });
@@ -17,11 +18,25 @@ Comment.belongsTo(User, { foreignKey: 'idUser', as: 'user' });
 Task.hasMany(Comment, { foreignKey: 'idTask', as: 'comments', onDelete: 'CASCADE' });
 Comment.belongsTo(Task, { foreignKey: 'idTask', as: 'task' });
 
+// Relations many-to-many entre Task et User (partage de tâches)
+Task.belongsToMany(User, {
+  through: Conversation, // Utiliser la table de liaison TaskUser
+  foreignKey: 'idTask', // Clé étrangère dans TaskUser qui référence Task
+  otherKey: 'idUser',
+  as: 'sharedWith', // Alias pour accéder aux utilisateurs avec qui la tâche est partagée
+});
 
+User.belongsToMany(Task, {
+  through: Conversation, // Utiliser la table de liaison TaskUser
+  foreignKey: 'idUser', // Clé étrangère dans TaskUser qui référence User
+  otherKey: 'idUser',
+  as: 'sharedTasks', // Alias pour accéder aux tâches partagées avec l'utilisateur
+});
 module.exports = {
   sequelize,
   User,
   Task,
   Todo,
   Comment,
+  Conversation,
 };

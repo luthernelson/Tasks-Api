@@ -1,12 +1,12 @@
 const Task = require('../../models/Task'); // Assurez-vous de charger le modèle de tâche
 const Todo = require('../../models/Todo');
 const User = require('../../models/User'); // Assurez-vous de charger le modèle d'utilisateur
+const Conversation = require('../../models/Conversation');
 
 const shareTask = async (req, res) => {
-    const { idTask, idUser} = req.body; // On suppose que idTask et userIds sont envoyés dans le corps de la requête
+    const { idTask, idUser } = req.body;
 
     try {
-        // Vérifier que idTask et userIds sont fournis
         if (!idTask || !Array.isArray(idUser) || idUser.length === 0) {
             return res.status(400).json({
                 message: 'idTask et userIds sont requis',
@@ -15,7 +15,6 @@ const shareTask = async (req, res) => {
             });
         }
 
-        // Trouver la tâche par son ID
         const task = await Task.findByPk(idTask);
         if (!task) {
             return res.status(404).json({
@@ -25,12 +24,11 @@ const shareTask = async (req, res) => {
             });
         }
 
-        task.isShared = true; // Assurez-vous que la propriété isShared existe dans le modèle Task  
+        task.isShared = true;  
         await task.save();
 
         const todos = await Todo.findAll({ where: { idTask } });
 
-        // Optionnel: ajouter une logique pour partager la tâche avec les utilisateurs
         const users = await User.findAll({ where: { idUser: idUser } });
         if (users.length === 0) {
             return res.status(404).json({
@@ -40,30 +38,51 @@ const shareTask = async (req, res) => {
             });
         }
 
-        // Logique pour notifier les utilisateurs ou enregistrer le partage peut être ajoutée ici.
-
-        console.log('Tâche partagée avec les utilisateurs sélectionnés');
-
-        // Répondre avec la tâche mise à jour
-        res.status(200).json({ tasksWithTodos: [
-            {
-                task: {
-                    idTask: task.idTask,
-                    idUser: task.idUser,
-                    title: task.title,
-                    description: task.description,
-                    isCompled: task.isCompled,
-                    isShared: task.isShared
-                },
-                todos: todos.map(todo => ({
-                    idTodo: todo.idTodo,
-                    idTask: todo.idTask,
-                    title: todo.title,
-                    isCompled: todo.isCompled
-                }))
+        // Vérifier si la tâche a déjà été partagée avec ces utilisateurs
+        for (const userId of idUser) {
+            const existingConversation = await Conversation.findOne({
+                where: { idTask, idUser: userId }
+            });
+            if (existingConversation) {
+                return res.status(400).json({
+                    message: `La tâche a déjà été partagée avec l'utilisateur ${userId}`,
+                    code: "TASK-07",
+                    isError: true
+                });
             }
-        ],
-        isError: false});
+        }
+
+        // Créer une nouvelle conversation pour chaque utilisateur
+        const conversations = await Promise.all(idUser.map(async (userId) => {
+            return await Conversation.create({ 
+                idTask: task.idTask,
+                idUser: userId 
+            });
+        }));
+
+        console.log('Tâches partagées avec les utilisateurs sélectionnés');
+
+        res.status(200).json({
+            tasksWithTodos: [
+                {
+                    task: {
+                        idTask: task.idTask,
+                        idUser: task.idUser,
+                        title: task.title,
+                        description: task.description,
+                        isCompled: task.isCompled,
+                        isShared: task.isShared
+                    },
+                    todos: todos.map(todo => ({
+                        idTodo: todo.idTodo,
+                        idTask: todo.idTask,
+                        title: todo.title,
+                        isCompled: todo.isCompled
+                    }))
+                }
+            ],
+            isError: false
+        });
         
     } catch (error) {
         console.error('Erreur lors du partage de la tâche:', error);
