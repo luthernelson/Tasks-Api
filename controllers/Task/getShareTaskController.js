@@ -46,7 +46,7 @@ const getSharedTasks = async (req, res) => {
         }},
         todos: tasks.todos.length > 0 ? tasks.todos.map(todo => ({
           idTodo: todo.idTodo,
-          idTask: todo.idTask,
+          idTask: todo.idTask,  
           title: todo.title
         })) : [],
         sharedWith: tasks.sharedWith.map(user => ({
