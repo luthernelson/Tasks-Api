@@ -50,8 +50,8 @@ const createTask = async (req, res) => {
             idUser: idUser,
             title:title,
             description:description,
-            isCompled:isCompled,
-            isShared: isShared,
+            isCompled:false,
+            isShared: false,
         });
         // Vérifiez si des todos sont fournis dans la requête
         if (req.body.todos && Array.isArray(req.body.todos)) {
@@ -59,7 +59,7 @@ const createTask = async (req, res) => {
             const todos = req.body.todos.map(todo => ({
                 idTask: task.idTask, // Associez le todo à la tâche créée
                 title: todo.title,
-                isCompleted: todo.isCompleted || false,
+                isCompled: todo.isCompled || false,
             }));
             
             console.log('Todos à créer:', todos);

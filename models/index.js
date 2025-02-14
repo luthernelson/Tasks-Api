@@ -23,14 +23,15 @@ Task.belongsToMany(User, {
   through: Conversation, // Utiliser la table de liaison TaskUser
   foreignKey: 'idTask', // Clé étrangère dans TaskUser qui référence Task
   otherKey: 'idUser',
-  as: 'sharedWith', // Alias pour accéder aux utilisateurs avec qui la tâche est partagée
+  as: 'sharedWith',
+  unique: false, // Alias pour accéder aux utilisateurs avec qui la tâche est partagée
 });
 
 User.belongsToMany(Task, {
   through: Conversation, // Utiliser la table de liaison TaskUser
   foreignKey: 'idUser', // Clé étrangère dans TaskUser qui référence User
-  otherKey: 'idUser',
   as: 'sharedTasks', // Alias pour accéder aux tâches partagées avec l'utilisateur
+  unique: false,
 });
 module.exports = {
   sequelize,

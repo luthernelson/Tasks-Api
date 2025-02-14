@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
 
 
 // Synchronisation des modèles avec la base de données
-sequelize.sync({ force: false })  
+sequelize.sync({ alter:false})  
   .then(() => {
     console.log('Tables synchronisées avec succès');
     server.listen(port, () => {

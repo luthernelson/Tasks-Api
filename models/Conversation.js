@@ -16,6 +16,7 @@ const Conversation = sequelize.define('Conversation', {
         },
         onUpdate: 'CASCADE', // Comportement lors de la mise à jour
         onDelete: 'CASCADE', // Comportement lors de la suppression
+        unique: false // Désactive la contrainte unique
     },
     idUser: {
         type: DataTypes.INTEGER, // Type correspondant à l'id dans la table Task
@@ -26,9 +27,10 @@ const Conversation = sequelize.define('Conversation', {
         },
         onUpdate: 'CASCADE', // Comportement lors de la mise à jour
         onDelete: 'CASCADE', // Comportement lors de la suppression
+        unique: false, 
     },
 }, {
-    freezeTableName: true, // Empêche Sequelize d'ajouter un 's' au nom de la table
+    freezeTableName: true, 
 });
 
 module.exports = Conversation;
