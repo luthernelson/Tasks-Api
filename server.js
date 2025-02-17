@@ -29,7 +29,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: '*', // Remplacez par l'origine de votre application frontend
+    origin: 'https://workstream-qnt4.onrender.com', // Remplacez par l'origine de votre application frontend
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -38,7 +38,7 @@ const io = socketIo(server, {
 
 // Configuration de CORS pour les routes Express
 const corsOptions = {
-  origin: '*',
+  origin: 'https://workstream-qnt4.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
