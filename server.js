@@ -29,7 +29,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:5173', // Remplacez par l'origine de votre application frontend
+    origin: '*', // Remplacez par l'origine de votre application frontend
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
     credentials: true,
@@ -38,7 +38,7 @@ const io = socketIo(server, {
 
 // Configuration de CORS pour les routes Express
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
