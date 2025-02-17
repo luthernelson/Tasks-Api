@@ -65,7 +65,7 @@ app.use('/api', getUser);
 app.use('/api', getSharedTasks);
 app.use('/api', getCommentByTask);
 
-const port = 3000;
+const port =process.env.PORT || 4000;
 
 io.on('connection', (socket) => {
   console.log('Un utilisateur est connecté');
